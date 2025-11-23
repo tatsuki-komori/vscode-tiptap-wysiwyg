@@ -5,7 +5,16 @@ import { Markdown } from '@tiptap/markdown';
 import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
 import Typography from '@tiptap/extension-typography';
+import { Table } from '@tiptap/extension-table';
+import { TableRow } from '@tiptap/extension-table-row';
+import { TableCell } from '@tiptap/extension-table-cell';
+import { TableHeader } from '@tiptap/extension-table-header';
+import { TaskList } from '@tiptap/extension-task-list';
+import { TaskItem } from '@tiptap/extension-task-item';
+import { Image } from '@tiptap/extension-image';
+import MathExtension from '@aarkue/tiptap-math-extension';
 import MarkdownIt from 'markdown-it';
+import 'katex/dist/katex.min.css';
 
 // Declare vscode API
 declare global {
@@ -15,6 +24,8 @@ declare global {
 }
 
 const vscode = window.acquireVsCodeApi();
+
+
 
 const TiptapEditor = () => {
   const [isSourceMode, setIsSourceMode] = useState(false);
@@ -31,10 +42,22 @@ const TiptapEditor = () => {
         placeholder: 'Write something...',
       }),
       Typography,
+      Table.configure({
+        resizable: true,
+      }),
+      TableRow,
+      TableHeader,
+      TableCell,
+      TaskList,
+      TaskItem.configure({
+        nested: true,
+      }),
+      Image,
+      MathExtension as any,
     ],
     content: '',
     onUpdate: ({ editor }) => {
-      const markdown = (editor.storage.markdown as any).getMarkdown();
+      const markdown = (editor as any).getMarkdown();
       setMarkdownContent(markdown);
       vscode.postMessage({
         type: 'update',
@@ -78,7 +101,7 @@ const TiptapEditor = () => {
     } else {
         // Switch to Source
         if (editor) {
-            const markdown = (editor.storage.markdown as any).getMarkdown();
+            const markdown = (editor as any).getMarkdown();
             setMarkdownContent(markdown);
         }
     }
@@ -104,14 +127,70 @@ const TiptapEditor = () => {
             min-height: 100px;
             height: 100%;
             overflow-y: auto;
+            padding: 10px;
             }
             .ProseMirror p {
                 margin-top: 0.5em;
                 margin-bottom: 0.5em;
             }
+            /* Table Styles */
+            .ProseMirror table {
+              border-collapse: collapse;
+              table-layout: fixed;
+              width: 100%;
+              margin: 0;
+              overflow: hidden;
+            }
+            .ProseMirror td,
+            .ProseMirror th {
+              min-width: 1em;
+              border: 2px solid var(--vscode-editor-lineHighlightBorder);
+              padding: 3px 5px;
+              vertical-align: top;
+              box-sizing: border-box;
+              position: relative;
+            }
+            .ProseMirror th {
+              font-weight: bold;
+              text-align: left;
+              background-color: var(--vscode-editor-inactiveSelectionBackground);
+            }
+            .ProseMirror .selectedCell:after {
+              z-index: 2;
+              position: absolute;
+              content: "";
+              left: 0; right: 0; top: 0; bottom: 0;
+              background: rgba(200, 200, 255, 0.4);
+              pointer-events: none;
+            }
+            .ProseMirror .column-resize-handle {
+              position: absolute;
+              right: -2px;
+              top: 0;
+              bottom: 0;
+              width: 4px;
+              background-color: #adf;
+              pointer-events: none;
+            }
+            /* Task List Styles */
+            ul[data-type="taskList"] {
+              list-style: none;
+              padding: 0;
+            }
+            ul[data-type="taskList"] li {
+              display: flex;
+            }
+            ul[data-type="taskList"] li > label {
+              flex: 0 0 auto;
+              margin-right: 0.5rem;
+              user-select: none;
+            }
+            ul[data-type="taskList"] li > div {
+              flex: 1 1 auto;
+            }
         `}</style>
-        <div style={{ display: isSourceMode ? 'none' : 'block', height: '100%' }}>
-            <EditorContent editor={editor} style={{ height: '100%' }} />
+        <div style={{ display: isSourceMode ? 'none' : 'flex', flexDirection: 'column', height: '100%' }}>
+            <EditorContent editor={editor} style={{ flex: 1, overflow: 'hidden' }} />
         </div>
         {isSourceMode && (
             <textarea 
