@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
+import { Extension, InputRule } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
 import { Markdown } from '@tiptap/markdown';
 import Link from '@tiptap/extension-link';
@@ -12,8 +13,10 @@ import { TableHeader } from '@tiptap/extension-table-header';
 import { TaskList } from '@tiptap/extension-task-list';
 import { TaskItem } from '@tiptap/extension-task-item';
 import { Image } from '@tiptap/extension-image';
+import BulletList from '@tiptap/extension-bullet-list';
+import OrderedList from '@tiptap/extension-ordered-list';
+import ListItem from '@tiptap/extension-list-item';
 import MathExtension from '@aarkue/tiptap-math-extension';
-import MarkdownIt from 'markdown-it';
 import 'katex/dist/katex.min.css';
 
 // Declare vscode API
@@ -25,18 +28,57 @@ declare global {
 
 const vscode = window.acquireVsCodeApi();
 
+const CustomTaskItemInputRule = Extension.create({
+  name: 'customTaskItemInputRule',
 
+  addInputRules() {
+    return [
+      new InputRule({
+        find: /^\[([ |x])\]\s$/,
+        handler: ({ state, range, match }) => {
+          const { $from } = state.selection;
+          const parent = $from.node($from.depth - 1);
+          
+          if (parent && parent.type.name === 'listItem') {
+            const checked = match[1] === 'x';
+            
+            const chain = this.editor.chain()
+              .focus()
+              .deleteRange(range)
+              .liftListItem('listItem')
+              .toggleTaskList();
+            
+            if (checked) {
+               chain.updateAttributes('taskItem', { checked: true });
+            }
+
+            chain.run();
+          }
+        },
+      }),
+    ];
+  },
+});
 
 const TiptapEditor = () => {
   const [isSourceMode, setIsSourceMode] = useState(false);
   const [markdownContent, setMarkdownContent] = useState('');
 
-  const mdParser = useMemo(() => new MarkdownIt(), []);
-
   const editor = useEditor({
     extensions: [
-      StarterKit,
-      Markdown,
+      StarterKit.configure({
+        bulletList: false,
+        orderedList: false,
+        listItem: false,
+      }),
+      CustomTaskItemInputRule,
+      TaskList,
+      TaskItem.configure({
+        nested: true,
+      }),
+      BulletList,
+      OrderedList,
+      ListItem,
       Link,
       Placeholder.configure({
         placeholder: 'Write something...',
@@ -48,12 +90,9 @@ const TiptapEditor = () => {
       TableRow,
       TableHeader,
       TableCell,
-      TaskList,
-      TaskItem.configure({
-        nested: true,
-      }),
       Image,
       MathExtension as any,
+      Markdown,
     ],
     content: '',
     onUpdate: ({ editor }) => {
@@ -74,8 +113,7 @@ const TiptapEditor = () => {
           setMarkdownContent(message.text);
           if (editor && !editor.isFocused && !isSourceMode) {
              // Convert incoming markdown to HTML for Tiptap
-             const newHtml = mdParser.render(message.text);
-             editor.commands.setContent(newHtml);
+             editor.commands.setContent(message.text, { contentType: 'markdown' } as any);
           }
           break;
       }
@@ -89,14 +127,13 @@ const TiptapEditor = () => {
     return () => {
       window.removeEventListener('message', handleMessage);
     };
-  }, [editor, mdParser, isSourceMode]);
+  }, [editor, isSourceMode]);
 
   const toggleMode = () => {
     if (isSourceMode) {
         // Switch to WYSIWYG
         if (editor) {
-            const newHtml = mdParser.render(markdownContent);
-            editor.commands.setContent(newHtml);
+            editor.commands.setContent(markdownContent, { contentType: 'markdown' } as any);
         }
     } else {
         // Switch to Source
@@ -177,11 +214,18 @@ const TiptapEditor = () => {
               list-style: none;
               padding: 0;
             }
+            ul + ul[data-type="taskList"],
+            ul[data-type="taskList"] + ul {
+              margin-top: 0;
+            }
             ul[data-type="taskList"] li {
               display: flex;
+              align-items: center;
             }
             ul[data-type="taskList"] li > label {
               flex: 0 0 auto;
+              display: inline-flex;
+              align-items: center;
               margin-right: 0.5rem;
               user-select: none;
             }
