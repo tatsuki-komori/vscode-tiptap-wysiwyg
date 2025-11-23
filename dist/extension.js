@@ -1,1 +1,212 @@
-(()=>{"use strict";var t={398:t=>{t.exports=require("vscode")},940:function(t,e,n){var r,i=this&&this.__createBinding||(Object.create?function(t,e,n,r){void 0===r&&(r=n);var i=Object.getOwnPropertyDescriptor(e,n);i&&!("get"in i?!e.__esModule:i.writable||i.configurable)||(i={enumerable:!0,get:function(){return e[n]}}),Object.defineProperty(t,r,i)}:function(t,e,n,r){void 0===r&&(r=n),t[r]=e[n]}),o=this&&this.__setModuleDefault||(Object.create?function(t,e){Object.defineProperty(t,"default",{enumerable:!0,value:e})}:function(t,e){t.default=e}),s=this&&this.__importStar||(r=function(t){return r=Object.getOwnPropertyNames||function(t){var e=[];for(var n in t)Object.prototype.hasOwnProperty.call(t,n)&&(e[e.length]=n);return e},r(t)},function(t){if(t&&t.__esModule)return t;var e={};if(null!=t)for(var n=r(t),s=0;s<n.length;s++)"default"!==n[s]&&i(e,t,n[s]);return o(e,t),e});Object.defineProperty(e,"__esModule",{value:!0}),e.TiptapEditorProvider=void 0;const a=s(n(398));class c{static register(t){const e=new c(t);return a.window.registerCustomEditorProvider(c.viewType,e)}constructor(t){this.context=t}async resolveCustomTextEditor(t,e,n){e.webview.options={enableScripts:!0,localResourceRoots:[a.Uri.joinPath(this.context.extensionUri,"dist")]},e.webview.html=this.getHtmlForWebview(e.webview);const r=a.workspace.onDidChangeTextDocument(n=>{n.document.uri.toString()===t.uri.toString()&&e.webview.postMessage({type:"update",text:t.getText()})});e.webview.onDidReceiveMessage(n=>{switch(n.type){case"ready":return void e.webview.postMessage({type:"update",text:t.getText()});case"update":return void this.updateTextDocument(t,n.text)}}),e.onDidDispose(()=>{r.dispose()})}getHtmlForWebview(t){const e=t.asWebviewUri(a.Uri.joinPath(this.context.extensionUri,"dist","webview.js"));return`\n\t\t\t<!DOCTYPE html>\n\t\t\t<html lang="en">\n\t\t\t<head>\n\t\t\t\t<meta charset="UTF-8">\n\t\t\t\t<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${t.cspSource} 'unsafe-inline'; script-src ${t.cspSource} 'unsafe-inline';">\n\t\t\t\t<meta name="viewport" content="width=device-width, initial-scale=1.0">\n\t\t\t\t<title>Tiptap Editor</title>\n\t\t\t\t<style>\n\t\t\t\t\tbody {\n\t\t\t\t\t\tbackground-color: var(--vscode-editor-background);\n\t\t\t\t\t\tcolor: var(--vscode-editor-foreground);\n\t\t\t\t\t\tfont-family: var(--vscode-font-family);\n\t\t\t\t\t\tpadding: 0;\n\t\t\t\t\t\tmargin: 0;\n\t\t\t\t\t}\n\t\t\t\t\t#root {\n\t\t\t\t\t\theight: 100vh;\n\t\t\t\t\t\tdisplay: flex;\n\t\t\t\t\t\tflex-direction: column;\n\t\t\t\t\t}\n\t\t\t\t</style>\n\t\t\t</head>\n\t\t\t<body>\n\t\t\t\t<div id="root">Loading Tiptap Editor...</div>\n\t\t\t\t<script>\n\t\t\t\t\twindow.addEventListener('error', function (e) {\n\t\t\t\t\t\tconst root = document.getElementById('root');\n\t\t\t\t\t\tif (root) {\n\t\t\t\t\t\t\troot.innerHTML = '<div style="color: red; padding: 20px;">' + \n\t\t\t\t\t\t\t\t'<h3>Runtime Error</h3>' +\n\t\t\t\t\t\t\t\t'<pre>' + e.message + '\\n' + e.filename + ':' + e.lineno + '</pre>' +\n\t\t\t\t\t\t\t\t'</div>';\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\t\t\t\t<\/script>\n\t\t\t\t<script src="${e}"><\/script>\n\t\t\t</body>\n\t\t\t</html>`}updateTextDocument(t,e){const n=new a.WorkspaceEdit;return n.replace(t.uri,new a.Range(0,0,t.lineCount,0),e),a.workspace.applyEdit(n)}}e.TiptapEditorProvider=c,c.viewType="tiptap-wysiwyg.markdownEditor"}},e={};function n(r){var i=e[r];if(void 0!==i)return i.exports;var o=e[r]={exports:{}};return t[r].call(o.exports,o,o.exports,n),o.exports}var r={};(()=>{var t=r;Object.defineProperty(t,"__esModule",{value:!0}),t.activate=function(t){t.subscriptions.push(e.TiptapEditorProvider.register(t))};const e=n(940)})();var i=exports;for(var o in r)i[o]=r[o];r.__esModule&&Object.defineProperty(i,"__esModule",{value:!0})})();
+/******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "./src/TiptapEditorProvider.ts":
+/*!*************************************!*\
+  !*** ./src/TiptapEditorProvider.ts ***!
+  \*************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.TiptapEditorProvider = void 0;
+const vscode = __importStar(__webpack_require__(/*! vscode */ "vscode"));
+class TiptapEditorProvider {
+    static register(context) {
+        const provider = new TiptapEditorProvider(context);
+        const providerRegistration = vscode.window.registerCustomEditorProvider(TiptapEditorProvider.viewType, provider);
+        return providerRegistration;
+    }
+    constructor(context) {
+        this.context = context;
+    }
+    async resolveCustomTextEditor(document, webviewPanel, _token) {
+        webviewPanel.webview.options = {
+            enableScripts: true,
+            localResourceRoots: [
+                vscode.Uri.joinPath(this.context.extensionUri, 'dist')
+            ]
+        };
+        webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview);
+        // Update webview when the document changes
+        const changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument((e) => {
+            if (e.document.uri.toString() === document.uri.toString()) {
+                webviewPanel.webview.postMessage({
+                    type: 'update',
+                    text: document.getText(),
+                });
+            }
+        });
+        // Receive message from the webview.
+        webviewPanel.webview.onDidReceiveMessage((e) => {
+            switch (e.type) {
+                case 'ready':
+                    webviewPanel.webview.postMessage({
+                        type: 'update',
+                        text: document.getText(),
+                    });
+                    return;
+                case 'update':
+                    this.updateTextDocument(document, e.text);
+                    return;
+            }
+        });
+        // Initial update is handled by the 'ready' message from the webview
+        // webviewPanel.webview.postMessage({
+        // 	type: 'update',
+        // 	text: document.getText(),
+        // });
+        webviewPanel.onDidDispose(() => {
+            changeDocumentSubscription.dispose();
+        });
+    }
+    getHtmlForWebview(webview) {
+        const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'dist', 'webview.js'));
+        return `
+			<!DOCTYPE html>
+			<html lang="en">
+			<head>
+				<meta charset="UTF-8">
+				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline'; script-src ${webview.cspSource} 'unsafe-inline';">
+				<meta name="viewport" content="width=device-width, initial-scale=1.0">
+				<title>Tiptap Editor</title>
+				<style>
+					body {
+						background-color: var(--vscode-editor-background);
+						color: var(--vscode-editor-foreground);
+						font-family: var(--vscode-font-family);
+						padding: 0;
+						margin: 0;
+					}
+					#root {
+						height: 100vh;
+						display: flex;
+						flex-direction: column;
+					}
+				</style>
+			</head>
+			<body>
+				<div id="root">Loading Tiptap Editor...</div>
+				<script>
+					window.addEventListener('error', function (e) {
+						const root = document.getElementById('root');
+						if (root) {
+							root.innerHTML = '<div style="color: red; padding: 20px;">' + 
+								'<h3>Runtime Error</h3>' +
+								'<pre>' + e.message + '\\n' + e.filename + ':' + e.lineno + '</pre>' +
+								'</div>';
+						}
+					});
+				</script>
+				<script src="${scriptUri}"></script>
+			</body>
+			</html>`;
+    }
+    updateTextDocument(document, text) {
+        const edit = new vscode.WorkspaceEdit();
+        // Just replace the entire document. 
+        // In a real implementation, we would compute a diff to be more efficient and preserve cursor position if possible.
+        edit.replace(document.uri, new vscode.Range(0, 0, document.lineCount, 0), text);
+        return vscode.workspace.applyEdit(edit);
+    }
+}
+exports.TiptapEditorProvider = TiptapEditorProvider;
+TiptapEditorProvider.viewType = 'tiptap-wysiwyg.markdownEditor';
+
+
+/***/ }),
+
+/***/ "vscode":
+/*!*************************!*\
+  !*** external "vscode" ***!
+  \*************************/
+/***/ ((module) => {
+
+module.exports = require("vscode");
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
+(() => {
+var exports = __webpack_exports__;
+/*!**************************!*\
+  !*** ./src/extension.ts ***!
+  \**************************/
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.activate = activate;
+const TiptapEditorProvider_1 = __webpack_require__(/*! ./TiptapEditorProvider */ "./src/TiptapEditorProvider.ts");
+function activate(context) {
+    context.subscriptions.push(TiptapEditorProvider_1.TiptapEditorProvider.register(context));
+}
+
+})();
+
+var __webpack_export_target__ = exports;
+for(var __webpack_i__ in __webpack_exports__) __webpack_export_target__[__webpack_i__] = __webpack_exports__[__webpack_i__];
+if(__webpack_exports__.__esModule) Object.defineProperty(__webpack_export_target__, "__esModule", { value: true });
+/******/ })()
+;
+//# sourceMappingURL=extension.js.map

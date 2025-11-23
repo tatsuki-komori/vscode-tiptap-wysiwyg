@@ -1,8 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { Markdown } from '@tiptap/markdown';
+import Link from '@tiptap/extension-link';
+import Placeholder from '@tiptap/extension-placeholder';
+import Typography from '@tiptap/extension-typography';
 import MarkdownIt from 'markdown-it';
-import TurndownService from 'turndown';
 
 // Declare vscode API
 declare global {
@@ -18,19 +21,20 @@ const TiptapEditor = () => {
   const [markdownContent, setMarkdownContent] = useState('');
 
   const mdParser = useMemo(() => new MarkdownIt(), []);
-  const turndownService = useMemo(() => new TurndownService({
-      headingStyle: 'atx',
-      codeBlockStyle: 'fenced'
-  }), []);
 
   const editor = useEditor({
     extensions: [
       StarterKit,
+      Markdown,
+      Link,
+      Placeholder.configure({
+        placeholder: 'Write something...',
+      }),
+      Typography,
     ],
     content: '',
     onUpdate: ({ editor }) => {
-      const html = editor.getHTML();
-      const markdown = turndownService.turndown(html);
+      const markdown = (editor.storage.markdown as any).getMarkdown();
       setMarkdownContent(markdown);
       vscode.postMessage({
         type: 'update',
@@ -74,8 +78,7 @@ const TiptapEditor = () => {
     } else {
         // Switch to Source
         if (editor) {
-            const html = editor.getHTML();
-            const markdown = turndownService.turndown(html);
+            const markdown = (editor.storage.markdown as any).getMarkdown();
             setMarkdownContent(markdown);
         }
     }

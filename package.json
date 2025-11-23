@@ -56,17 +56,19 @@
     "webpack-cli": "^5.1.1"
   },
   "dependencies": {
-    "@tiptap/core": "^2.10.3",
-    "@tiptap/extension-document": "^2.10.3",
-    "@tiptap/extension-paragraph": "^2.10.3",
-    "@tiptap/extension-text": "^2.10.3",
-    "@tiptap/pm": "^2.10.3",
-    "@tiptap/react": "^2.10.3",
-    "@tiptap/starter-kit": "^2.10.3",
-    "@types/turndown": "^5.0.6",
+    "@tiptap/core": "^3.11.0",
+    "@tiptap/extension-document": "^3.11.0",
+    "@tiptap/extension-paragraph": "^3.11.0",
+    "@tiptap/extension-text": "^3.11.0",
+    "@tiptap/pm": "^3.11.0",
+    "@tiptap/react": "^3.11.0",
+    "@tiptap/starter-kit": "^3.11.0",
+    "@tiptap/extension-link": "^3.11.0",
+    "@tiptap/extension-placeholder": "^3.11.0",
+    "@tiptap/extension-typography": "^3.11.0",
+    "@tiptap/markdown": "^3.11.0",
     "markdown-it": "^13.0.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "turndown": "^7.2.2"
+    "react-dom": "^18.2.0"
   }
 }
