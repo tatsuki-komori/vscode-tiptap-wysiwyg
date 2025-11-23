@@ -58,6 +58,8 @@ const TiptapEditor = () => {
         allowBase64: true,
       }),
       // Math support
+      // Note: Type assertion needed due to TypeScript compatibility issue between
+      // @aarkue/tiptap-math-extension and @tiptap/core peer dependencies
       MathExtension as any,
     ],
     content: '',
@@ -171,12 +173,13 @@ const TiptapEditor = () => {
               background: var(--vscode-editor-selectionBackground);
               pointer-events: none;
             }
+            /* Column resize handle - values from Tiptap table documentation */
             .ProseMirror .column-resize-handle {
               position: absolute;
-              right: -2px;
+              right: -2px; /* Offset to center on column border */
               top: 0;
-              bottom: -2px;
-              width: 4px;
+              bottom: -2px; /* Extend slightly below table */
+              width: 4px; /* Handle width for easier dragging */
               background-color: var(--vscode-editorWidget-border);
               pointer-events: none;
             }
